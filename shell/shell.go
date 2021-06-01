@@ -4,12 +4,11 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"github.com/cortesi/termlog"
 	"io"
 	"os"
 	"os/exec"
 	"sync"
-
-	"github.com/cortesi/termlog"
 )
 
 var ValidShells = map[string]bool{
@@ -157,7 +156,7 @@ func (e *Executor) Signal(sig os.Signal) error {
 }
 
 func (e *Executor) Stop() error {
-	return e.Signal(os.Kill)
+	return e.Signal(os.Interrupt)
 }
 
 func logOutput(wg *sync.WaitGroup, fp io.ReadCloser, out func(string, ...interface{})) {

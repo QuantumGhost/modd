@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"github.com/cortesi/modd/conf"
@@ -170,11 +171,12 @@ func (mr *ModRunner) runOnChan(modchan chan *moddwatch.Mod, readyCallback func()
 	if err != nil {
 		return err
 	}
-	defer dworld.Shutdown(os.Kill)
+	defer dworld.Shutdown(os.Interrupt)
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, os.Kill)
-	defer signal.Reset(os.Interrupt, os.Kill)
+
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	defer signal.Reset(os.Interrupt, syscall.SIGTERM)
 	go func() {
 		dworld.Shutdown(<-c)
 		os.Exit(0)
